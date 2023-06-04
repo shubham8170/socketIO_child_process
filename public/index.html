@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.1/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Connect to the server via Socket.IO
+        const socket = io();
+        // Receive response from the server
+        socket.on('response', (res) => {
+            // Update the HTML with the response
+            function arrayBufferToStringArray(buffer) {
+                const uint8Array = new Uint8Array(buffer);
+                const decoder = new TextDecoder();
+                const decodedString = decoder.decode(uint8Array);
+                const stringArray = decodedString.split('\n').filter(Boolean);
+                return stringArray;
+            }
+            // extract data from arrayBuffer
+            const stringArray = arrayBufferToStringArray(res);
+
+            const regex = /'([^']+)'/g;
+
+            // Extract the strings enclosed in single quotes
+            const matches = [];
+            let match;
+            while ((match = regex.exec(stringArray[0])) !== null) {
+                matches.push(match[1]);
+            }
+            let data = matches
+            let list = document.getElementById("myList");
+            for (i = 0; i < data.length; ++i) {
+                var li = document.createElement('li');
+                li.innerText = data[i];
+                list.appendChild(li);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Socket.IO Example</h1>
+    <ul id="myList"></ul>
+</body>
+
+</html>
